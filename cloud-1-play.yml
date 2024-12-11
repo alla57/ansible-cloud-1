@@ -1,0 +1,62 @@
+- hosts: all
+  become: true
+  tasks:
+    - name: Install required packages
+      ansible.builtin.apt:
+        pkg:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+        # - python3-pip
+        # - virtualenv
+        # - python3-setuptools
+        state: latest
+        update_cache: yes
+
+    - name: Add docker gpg apt key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add docker repository
+      ansible.builtin.apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    # - name: Install Docker Module for Python
+    #   pip:
+    #     name: docker
+
+    - name: Ensure docker is started and enabled
+      systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Install git from apt repository
+      apt:
+        name: git
+        state: present
+
+    - name: Install make from apt repository
+      apt:
+        name: make
+        state: present
+
+    - name: Clone git repository of the project
+      git:
+        repo: "https://github.com/alla57/cloud-1.git"
+        dest: "/home/a_boumediene01/cloud-1"
+        clone: yes
+        update: yes
+
+    - name: Build and run the project
+      community.general.make:
+        chdir: '/home/a_boumediene01/cloud-1/new'

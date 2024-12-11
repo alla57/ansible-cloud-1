@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+    - name: Make the wanted target
+      make:
+        chdir: '/home/a_boumediene01/cloud-1/new'
+        target: "{{ target }}"
