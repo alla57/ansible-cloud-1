@@ -38,19 +38,12 @@ services:
   phpmyadmin:
     container_name: phpmyadmin
     build: ./phpmyadmin
-    # environment:
-    #   - PMA_HOST=mysql
-    #   - PMA_USER=mysql
-    #   - PMA_PASSWORD=db_P4sswrd
-    #   - PMA_ARBITRARY=1
     depends_on:
       - mysql
     volumes:
       - phpmyadmin_volume:/var/www/html/phpmyadmin
     networks:
       - mynetwork
-    # ports:
-    #   - "8080:80"
     restart: always
 volumes:
   wp_volume:

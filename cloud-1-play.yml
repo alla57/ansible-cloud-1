@@ -3,10 +3,6 @@
   vars_files:
   - secrets.yml
   tasks:
-    # - name: Print the gateway for each host when defined
-    #   ansible.builtin.debug:
-    #     msg: System {{ wp_admin_user }} is there
-
     - name: Install required packages
       ansible.builtin.apt:
         pkg:
@@ -14,9 +10,6 @@
         - ca-certificates
         - curl
         - software-properties-common
-        # - python3-pip
-        # - virtualenv
-        # - python3-setuptools
         state: latest
         update_cache: yes
 
@@ -35,10 +28,6 @@
         name: docker-ce
         state: latest
         update_cache: true
-
-    # - name: Install Docker Module for Python
-    #   pip:
-    #     name: docker
 
     - name: Ensure docker is started and enabled
       systemd:
@@ -60,26 +49,11 @@
       ansible.builtin.copy:
         src: /home/alboumed/ansible-cloud-1/srcs/
         dest: /home/alboumed
-        # owner: alboumed
-        # group: alboumed
-        # mode: '0644'
 
     - name: Create .env file from template
       template:
         src: env.j2
         dest: "/home/alboumed/.env"
-    #   delegate_to: localhost
-
-    # - name: Clone git repository of the project
-    #   git:
-    #     repo: "https://github.com/alla57/cloud-1.git"
-    #     dest: "/home/a_boumediene01/cloud-1"
-    #     clone: yes
-    #     update: yes
-
-    # - name: Build and run the project
-    #   community.general.make:
-    #     chdir: '/home/alboumed'
 
     - name: Creates directory
       ansible.builtin.file:

@@ -7,3 +7,7 @@
       make:
         chdir: '/home/a_boumediene01/cloud-1/new'
         target: "{{ target }}"
+    
+    # - name: Build and run the project
+    #   community.general.make:
+    #     chdir: '/home/alboumed'
