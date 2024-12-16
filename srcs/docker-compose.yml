@@ -1,0 +1,78 @@
+version: '3'
+services:
+  mysql:
+    container_name: mysql
+    build: ./mysql
+    volumes:
+      - mysql_volume:/var/lib/mysql
+    env_file:
+      - .env
+    networks:
+      - mynetwork
+    restart: always
+  wordpress:
+    container_name: wordpress
+    build: ./wordpress
+    depends_on:
+      - mysql
+    volumes: 
+      - wp_volume:/var/www/html/wordpress
+    env_file:
+      - .env
+    networks:
+      - mynetwork
+    restart: always
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    depends_on:
+      - wordpress
+    volumes:
+      - wp_volume:/var/www/html/wordpress
+      - phpmyadmin_volume:/var/www/html/phpmyadmin
+    ports:
+      - "443:443"
+    networks:
+      - mynetwork
+    restart: always
+  phpmyadmin:
+    container_name: phpmyadmin
+    build: ./phpmyadmin
+    # environment:
+    #   - PMA_HOST=mysql
+    #   - PMA_USER=mysql
+    #   - PMA_PASSWORD=db_P4sswrd
+    #   - PMA_ARBITRARY=1
+    depends_on:
+      - mysql
+    volumes:
+      - phpmyadmin_volume:/var/www/html/phpmyadmin
+    networks:
+      - mynetwork
+    # ports:
+    #   - "8080:80"
+    restart: always
+volumes:
+  wp_volume:
+    name: wp_volume
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/alboumed/data/wp_volume
+  mysql_volume:
+    name: mysql_volume
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: bind
+      device: /home/alboumed/data/mysql_volume
+  phpmyadmin_volume:
+    name: phpmyadmin_volume
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: bind
+      device: /home/alboumed/data/phpmyadmin_volume
+networks:
+  mynetwork:

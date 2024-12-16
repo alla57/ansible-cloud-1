@@ -1,6 +1,12 @@
 - hosts: all
   become: true
+  vars_files:
+  - secrets.yml
   tasks:
+    # - name: Print the gateway for each host when defined
+    #   ansible.builtin.debug:
+    #     msg: System {{ wp_admin_user }} is there
+
     - name: Install required packages
       ansible.builtin.apt:
         pkg:
@@ -49,14 +55,45 @@
       apt:
         name: make
         state: present
+    
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: /home/alboumed/ansible-cloud-1/srcs/
+        dest: /home/alboumed
+        # owner: alboumed
+        # group: alboumed
+        # mode: '0644'
 
-    - name: Clone git repository of the project
-      git:
-        repo: "https://github.com/alla57/cloud-1.git"
-        dest: "/home/a_boumediene01/cloud-1"
-        clone: yes
-        update: yes
+    - name: Create .env file from template
+      template:
+        src: env.j2
+        dest: "/home/alboumed/.env"
+    #   delegate_to: localhost
 
-    - name: Build and run the project
-      community.general.make:
-        chdir: '/home/a_boumediene01/cloud-1/new'
+    # - name: Clone git repository of the project
+    #   git:
+    #     repo: "https://github.com/alla57/cloud-1.git"
+    #     dest: "/home/a_boumediene01/cloud-1"
+    #     clone: yes
+    #     update: yes
+
+    # - name: Build and run the project
+    #   community.general.make:
+    #     chdir: '/home/alboumed'
+
+    - name: Creates directory
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        recurse: true
+        mode: '0755'
+      with_items:
+        - /home/alboumed/data/mysql_volume
+        - /home/alboumed/data/wp_volume
+        - /home/alboumed/data/phpmyadmin_volume
+
+    - name: Create and start services
+      community.docker.docker_compose_v2:
+        build: always
+        project_src: /home/alboumed
+      register: docker_output
