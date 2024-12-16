@@ -1,12 +1,6 @@
 FROM debian:12
 
 RUN DEBIAN_FRONTEND=noninteractive
-# Set environment variables for pre-seeding (MySQL in this example)
-# ENV PHPMYADMIN_DB_SERVER mysql
-# ENV PHPMYADMIN_RECONFIGURE_STRENGTH low
-# ENV DB_TYPE mysql
-# ENV DB_USER root
-# ENV DB_PASS your_mysql_root_password
 
 RUN apt update && apt upgrade -y
 
@@ -23,11 +17,7 @@ RUN rm -rf phpMyAdmin-5.2.1-all-languages.tar.gz index.html
 RUN mv phpMyAdmin-5.2.1-all-languages phpmyadmin
 
 COPY ./conf/config.inc.php /var/www/html/phpmyadmin
-# COPY ./conf/config-db.php /var/www/html/phpmyadmin
 
 EXPOSE 80
-
-
-# RUN apt install -y phpmyadmin
 
 CMD ["/usr/sbin/php-fpm8.2", "-F"]

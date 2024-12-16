@@ -60,7 +60,6 @@
         path: "{{ item }}"
         state: directory
         recurse: true
-        mode: '0755'
       with_items:
         - /home/alboumed/data/mysql_volume
         - /home/alboumed/data/wp_volume
