@@ -6,9 +6,11 @@
 
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
-    src: /home/alboumed/ansible-cloud-1/srcs/phpmyadmin
+    src: "{{ item }}"
     dest: /home/alboumed
-# roles/my_role/tasks/main.yml
+  with_items:
+    - "/home/alboumed/ansible-cloud-1/srcs/docker-compose.yml"
+    - "/home/alboumed/ansible-cloud-1/srcs/phpmyadmin"
 
 - name: Create .env file from template
   template:
@@ -23,36 +25,9 @@
   with_items:
     - /home/alboumed/data/phpmyadmin_volume
 
-- name: Create Docker volume for phpmyadmin
-  community.docker.docker_volume:
-    name: phpmyadmin_volume
-    driver: local
-    driver_options:
-      type: none
-      o: bind
-      device: /home/alboumed/data/phpmyadmin_volume
-    state: present
-
-- name: Create a network
-  community.docker.docker_network:
-    name: mynetwork
-
-- name: Build phpmyadmin docker image
-  community.docker.docker_image:
-    name: phpmyadmin_image
-    build:
-      path: /home/alboumed/phpmyadmin/
-    source: build
-    state: present
-
-- name: Run phpmyadmin Docker container
-  community.docker.docker_container:
-    name: phpmyadmin
-    image: phpmyadmin_image
-    state: started
-    restart_policy: always
-    # env_file: /home/alboumed/.env
-    volumes:
-      - "wp_volume:/var/www/html/phpmyadmin"
-    networks:
-      - name: mynetwork
+- name: Create and start services
+  community.docker.docker_compose_v2:
+    build: always
+    project_src: /home/alboumed
+    services:
+      - phpmyadmin

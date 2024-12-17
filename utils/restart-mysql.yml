@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Restart mysql
+      community.docker.docker_compose_v2:
+        project_src: /home/alboumed
+        services:
+          - mysql
+        state: restarted

@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Restart nginx
+      community.docker.docker_compose_v2:
+        project_src: /home/alboumed
+        services:
+          - nginx
+        state: restarted

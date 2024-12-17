@@ -8,38 +8,12 @@
     - nginx
     - phpmyadmin
   tasks:
-    # - name: Install git from apt repository
-    #   apt:
-    #     name: git
-    #     state: present
-
     - name: Install make from apt repository
       apt:
         name: make
         state: present
-    
-    # - name: Copy file with owner and permissions
-    #   ansible.builtin.copy:
-    #     src: /home/alboumed/ansible-cloud-1/srcs/
-    #     dest: /home/alboumed
 
-    # - name: Create .env file from template
-    #   template:
-    #     src: env.j2
-    #     dest: "/home/alboumed/.env"
-
-    # - name: Creates directory
-    #   ansible.builtin.file:
-    #     path: "{{ item }}"
-    #     state: directory
-    #     recurse: true
-    #   with_items:
-    #     - /home/alboumed/data/mysql_volume
-    #     - /home/alboumed/data/wp_volume
-    #     - /home/alboumed/data/phpmyadmin_volume
-
-    # - name: Create and start services
-    #   community.docker.docker_compose_v2:
-    #     build: always
-    #     project_src: /home/alboumed
-    #   register: docker_output
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: "/home/alboumed/ansible-cloud-1/srcs/Makefile"
+        dest: /home/alboumed
