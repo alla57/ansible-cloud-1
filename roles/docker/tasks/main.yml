@@ -1,0 +1,33 @@
+---
+# Docker install and run
+- name: Install required packages
+  ansible.builtin.apt:
+    pkg:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    state: latest
+    update_cache: yes
+
+- name: Add docker gpg apt key
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add docker repository
+  ansible.builtin.apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: true
+
+- name: Ensure docker is started and enabled
+  systemd:
+    name: docker
+    state: started
+    enabled: true

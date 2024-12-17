@@ -1,0 +1,58 @@
+---
+# Copy and build nginx container
+- name: Include secret variables
+  ansible.builtin.include_vars:
+    file: ../../../vars/secrets.yml
+
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: /home/alboumed/ansible-cloud-1/srcs/mysql
+    dest: /home/alboumed
+# roles/my_role/tasks/main.yml
+
+- name: Create .env file from template
+  template:
+    src: ../../../templates/env.j2
+    dest: "/home/alboumed/.env"
+
+- name: Creates directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+  with_items:
+    - /home/alboumed/data/mysql_volume
+
+- name: Create Docker volume for mysql database
+  community.docker.docker_volume:
+    name: mysql_volume
+    driver: local
+    driver_options:
+      type: none
+      o: bind
+      device: /home/alboumed/data/mysql_volume
+    state: present
+
+- name: Create a network
+  community.docker.docker_network:
+    name: mynetwork
+
+- name: Build mysql docker image
+  community.docker.docker_image:
+    name: mysql_image
+    build:
+      path: /home/alboumed/mysql/
+    source: build
+    state: present
+
+- name: Run Mysql Docker container
+  community.docker.docker_container:
+    name: mysql
+    image: mysql_image
+    state: started
+    restart_policy: always
+    env_file: /home/alboumed/.env
+    volumes:
+      - "mysql_volume:/var/lib/mysql"
+    networks:
+      - name: mynetwork

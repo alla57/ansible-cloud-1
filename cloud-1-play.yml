@@ -1,72 +1,45 @@
 - hosts: all
   become: true
   vars_files:
-  - secrets.yml
+  - vars/secrets.yml
+  roles:
+    - mysql
+    - wordpress
+    - nginx
+    - phpmyadmin
   tasks:
-    - name: Install required packages
-      ansible.builtin.apt:
-        pkg:
-        - apt-transport-https
-        - ca-certificates
-        - curl
-        - software-properties-common
-        state: latest
-        update_cache: yes
-
-    - name: Add docker gpg apt key
-      ansible.builtin.apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-
-    - name: Add docker repository
-      ansible.builtin.apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu focal stable
-        state: present
-
-    - name: Update apt and install docker-ce
-      apt:
-        name: docker-ce
-        state: latest
-        update_cache: true
-
-    - name: Ensure docker is started and enabled
-      systemd:
-        name: docker
-        state: started
-        enabled: true
-
-    - name: Install git from apt repository
-      apt:
-        name: git
-        state: present
+    # - name: Install git from apt repository
+    #   apt:
+    #     name: git
+    #     state: present
 
     - name: Install make from apt repository
       apt:
         name: make
         state: present
     
-    - name: Copy file with owner and permissions
-      ansible.builtin.copy:
-        src: /home/alboumed/ansible-cloud-1/srcs/
-        dest: /home/alboumed
+    # - name: Copy file with owner and permissions
+    #   ansible.builtin.copy:
+    #     src: /home/alboumed/ansible-cloud-1/srcs/
+    #     dest: /home/alboumed
 
-    - name: Create .env file from template
-      template:
-        src: env.j2
-        dest: "/home/alboumed/.env"
+    # - name: Create .env file from template
+    #   template:
+    #     src: env.j2
+    #     dest: "/home/alboumed/.env"
 
-    - name: Creates directory
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        recurse: true
-      with_items:
-        - /home/alboumed/data/mysql_volume
-        - /home/alboumed/data/wp_volume
-        - /home/alboumed/data/phpmyadmin_volume
+    # - name: Creates directory
+    #   ansible.builtin.file:
+    #     path: "{{ item }}"
+    #     state: directory
+    #     recurse: true
+    #   with_items:
+    #     - /home/alboumed/data/mysql_volume
+    #     - /home/alboumed/data/wp_volume
+    #     - /home/alboumed/data/phpmyadmin_volume
 
-    - name: Create and start services
-      community.docker.docker_compose_v2:
-        build: always
-        project_src: /home/alboumed
-      register: docker_output
+    # - name: Create and start services
+    #   community.docker.docker_compose_v2:
+    #     build: always
+    #     project_src: /home/alboumed
+    #   register: docker_output
